@@ -5,40 +5,55 @@ import Section from 'components/Section/Section';
 import Notification from 'components/Notification/Notification';
 
 export default function Feedback() {
-  // const keys = Object.keys(this.state);
-  // const [keys, setKeys] = useState('');
+  const [good, setGood] = useState(0);
+  const [neutral, setNeutral] = useState(0);
+  const [bad, setBad] = useState(0);
 
-  const [good, setGood] = useState('0');
-  const [neutral, setNeutral] = useState('0');
-  const [bad, setBad] = useState('0');
+  const onLeaveFeedback = event => {
+    switch (event.target.textContent) {
+      case 'good':
+        setGood(good + 1);
+        break;
 
-  // console.log(neutral);
+      case 'neutral':
+        setNeutral(neutral + 1);
+        break;
 
-  const onLeaveFeedback = feedback => {
-    this.setState(prevState => ({
-      [feedback]: prevState[feedback] + 1,
-    }));
+      case 'bad':
+        setBad(bad + 1);
+        break;
+
+      default:
+        return;
+    }
   };
+
+  const countTotalFeedback = () => {
+    return good + neutral + bad;
+  };
+
+  const countPositiveFeedbackPercentage = () => {
+    return Math.round((good / countTotalFeedback()) * 1000) / 10;
+  };
+
+  const keys = Object.keys({ good, neutral, bad });
 
   return (
     <>
       <Section title="Please leave feedback">
-        <FeedbackOptions
-          // options={keys}
-          onLeaveFeedback={onLeaveFeedback}
-        />
+        <FeedbackOptions options={keys} onLeaveFeedback={onLeaveFeedback} />
       </Section>
 
       <Section title="Statistics">
-        {Number.isNaN(this.countPositiveFeedbackPercentage()) ? (
+        {Number.isNaN(countPositiveFeedbackPercentage()) ? (
           <Notification message="No feedback given"></Notification>
         ) : (
           <Statistic
-          // good={this.state.good}
-          // neutral={this.state.neutral}
-          // bad={this.state.bad}
-          // total={this.countTotalFeedback()}
-          // positivePercentage={this.countPositiveFeedbackPercentage()}
+            good={good}
+            neutral={neutral}
+            bad={bad}
+            total={countTotalFeedback()}
+            positivePercentage={countPositiveFeedbackPercentage()}
           />
         )}
       </Section>
